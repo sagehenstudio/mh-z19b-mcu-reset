@@ -1,6 +1,6 @@
-# Custom mh-z19b Mycodo Input 
+# Custom Mycodo Input for mh-z19b CO2 sensor reset
 
-This is a custom input for Mycodo with a mh_z19b MCU reset button.
+This is a custom input for Mycodo with a mh_z19b, which features a MCU reset button. Otherwise it's exactly the same.
 
 ## Why would we need a reset button?
 
