@@ -83,13 +83,15 @@ INPUT_INFORMATION = {
         }
     ],
 
-    'custom_actions_message': 'Zero point calibration: activate the sensor in a 400 ppmv CO2 environment, allow to run '
-                              'for 20 minutes, then press the Calibrate Zero Point button.<br>Span point calibration: '
-                              'activate the sensor in an environment with a stable CO2 concentration in the 1000 to '
-                              '2000 ppmv range, allow to run for 20 minutes, enter the ppmv value in the Span Point '
-                              '(ppmv) input field, then press the Calibrate Span Point button. If running a span '
-                              'point calibration, run a zero point calibration first.',
-    'custom_actions': [
+    'custom_commands_message': 'Zero point calibration: activate the sensor in a 400 ppmv CO2 environment (outside '
+                              'air), allow to run for 20 minutes, then press the Calibrate Zero Point button.<br>Span '
+                              'point calibration: activate the sensor in an environment with a stable CO2 concentration'
+                              ' between 1000 and 2000 ppmv (2000 recommended), allow to run for 20 minutes, enter the '
+                              'ppmv value in the Span Point (ppmv) input field, then press the Calibrate Span Point '
+                              'button. If running a span point calibration, run a zero point calibration first. A span '
+                              'point calibration is not necessary and should only be performed if you know what you are'
+                              ' doing and can accurately produce a 2000 ppmv environment.',
+    'custom_commands': [
         {
             'id': 'calibrate_zero_point',
             'type': 'button',
@@ -98,7 +100,7 @@ INPUT_INFORMATION = {
         {
             'id': 'span_point_value_ppmv',
             'type': 'integer',
-            'default_value': 1500,
+            'default_value': 2000,
             'name': 'Span Point (ppmv)',
             'phrase': 'The ppmv concentration for a span point calibration'
         },
@@ -111,17 +113,17 @@ INPUT_INFORMATION = {
             'id': 'mcu_reset',
             'type': 'button',
             'name': 'MCU Reset',
-            'phrase': 'Click to reset your unit if you have accidentally calibrated a span point'
+            'phrase': 'Click to reset your unit (if you have perhaps accidentally calibrated a span point)'
         }
     ]
 }
 
 
 class InputModule(AbstractInput):
-    """ A sensor support class that monitors the MH-Z19's CO2 concentration """
+    """A sensor support class that monitors the MH-Z19's CO2 concentration."""
 
     def __init__(self, input_dev, testing=False):
-        super(InputModule, self).__init__(input_dev, testing=testing, name=__name__)
+        super().__init__(input_dev, testing=testing, name=__name__)
 
         self.ser = None
         self.measuring = None
@@ -133,9 +135,9 @@ class InputModule(AbstractInput):
         if not testing:
             self.setup_custom_options(
                 INPUT_INFORMATION['custom_options'], input_dev)
-            self.initialize_input()
+            self.try_initialize()
 
-    def initialize_input(self):
+    def initialize(self):
         import serial
 
         if is_device(self.input_dev.uart_location):
@@ -162,9 +164,9 @@ class InputModule(AbstractInput):
         time.sleep(0.1)
 
     def get_measurement(self):
-        """ Gets the MH-Z19's CO2 concentration in ppmv """
+        """Gets the MH-Z19's CO2 concentration in ppmv."""
         if not self.ser:
-            self.logger.error("Input not set up")
+            self.logger.error("Error 101: Device not set up. See https://kizniche.github.io/Mycodo/Error-Codes#error-101 for more info.")
             return
 
         self.return_dict = copy.deepcopy(measurements_dict)
@@ -263,26 +265,6 @@ class InputModule(AbstractInput):
         # request = b"\xff\x01\x88" + byte3 + byte4 + b"\x00\x00\x00" + c
         # self.ser.write(request)
 
-    def mcu_reset(self, args_dict):
-        """
-        MCU Reset
-        """
-        while self.measuring:
-            time.sleep(0.1)
-
-        # CMD for MCU Reset: 0x8D
-        # Command format: 0xFF, 0x01, CMD, (5 bytes of parameters), CKSUM
-        # There will be no response
-
-        try:
-            self.logger.info("Conducting MCU reset")
-            self.ser.write(bytearray([0xff, 0x01, 0x8D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x73]))
-            time.sleep(0.1)
-        except:
-            self.logger.exception()
-        # request = b"\xff\x01\0x8D\x00\x00\x00\x00\x00\x73"
-        # self.ser.write(request)
-
     def calibrate_zero_point(self, args_dict):
         """
         Zero Point Calibration
@@ -301,6 +283,26 @@ class InputModule(AbstractInput):
         finally:
             self.calibrating = False
         # request = b"\xff\x01\x87\x00\x00\x00\x00\x00\x78"
+        # self.ser.write(request)
+
+    def mcu_reset(self, args_dict):
+        """
+        MCU Reset
+        """
+        while self.measuring:
+            time.sleep(0.1)
+
+        # CMD for MCU Reset: 0x8D
+        # Command format: 0xFF, 0x01, CMD, (5 bytes of parameters), CKSUM
+        # There will be no response
+
+        try:
+            self.logger.info("Conducting MCU reset")
+            self.ser.write(bytearray([0xff, 0x01, 0x8D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x73]))
+            time.sleep(0.1)
+        except:
+            self.logger.exception()
+        # request = b"\xff\x01\0x8D\x00\x00\x00\x00\x00\x73"
         # self.ser.write(request)
 
     @staticmethod
