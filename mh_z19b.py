@@ -33,9 +33,9 @@ measurements_dict = {
 
 # Input information
 INPUT_INFORMATION = {
-    'input_name_unique': 'MH_Z19B with MCU Reset',
+    'input_name_unique': 'MH_Z19B_MCU_Reset',
     'input_manufacturer': 'Winsen',
-    'input_name': 'MH-Z19B-mcu',
+    'input_name': 'MH-Z19B MCU Reset',
     'input_library': 'serial',
     'measurements_name': 'CO2',
     'measurements_dict': measurements_dict,
