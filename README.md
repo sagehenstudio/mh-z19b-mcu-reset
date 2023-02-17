@@ -8,5 +8,7 @@ If you are not running a environment with extremely strict tolerances, and are u
 
 ## Setup
 - Upload the mh_z19b.py file to Mycodo/mycodo/inputs/custom_inputs/ or go to **Configure** -> **Custom Inputs** -> **Import Input Module**
-- Restart your Mycodo system if it doesn't show right away on the Input screen
-- Create a new input (choose this one instead of the default Mycodo one)
+- Go to your Inputs screen and add "MH-Z19B w/Reset" (Restart your Mycodo system if it doesn't show right away on the Input screen)
+- Click the MCU Reset button
+
+That's it! It only takes a couple seconds. You might want to restart your system. You can continue with this input, or switch back to the native Mycodo mh_z19b input if you prefer.
