@@ -35,7 +35,7 @@ measurements_dict = {
 INPUT_INFORMATION = {
     'input_name_unique': 'MH_Z19B_MCU_Reset',
     'input_manufacturer': 'Winsen',
-    'input_name': 'MH-Z19B MCU Reset',
+    'input_name': 'MH-Z19B w/Reset',
     'input_library': 'serial',
     'measurements_name': 'CO2',
     'measurements_dict': measurements_dict,
@@ -91,7 +91,7 @@ INPUT_INFORMATION = {
                               'point calibration, run a zero point calibration first.',
     'custom_actions': [
         {
-            'id': 'calibrate_zero_point',
+            'id': 'calibrate_zero_point_m',
             'type': 'button',
             'name': 'Calibrate Zero Point'
         },
@@ -103,7 +103,7 @@ INPUT_INFORMATION = {
             'phrase': 'The ppmv concentration for a span point calibration'
         },
         {
-            'id': 'calibrate_span_point',
+            'id': 'calibrate_span_point_m',
             'type': 'button',
             'name': 'Calibrate Span Point'
         },
@@ -229,7 +229,7 @@ class InputModule(AbstractInput):
         else:
             return "out of range"
 
-    def calibrate_span_point(self, args_dict):
+    def calibrate_span_point_m(self, args_dict):
         """
         Span Point Calibration
         from https://github.com/UedaTakeyuki/mh-z19
@@ -281,7 +281,7 @@ class InputModule(AbstractInput):
         except:
             self.logger.exception()
 
-    def calibrate_zero_point(self, args_dict):
+    def calibrate_zero_point_m(self, args_dict):
         """
         Zero Point Calibration
         from https://github.com/UedaTakeyuki/mh-z19
